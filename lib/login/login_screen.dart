@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:h_app/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -6,6 +8,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _authService = AuthService();
   bool _obscurePassword = true;
 
   @override
@@ -17,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         iconTheme: const IconThemeData(color: Color(0xFF2E3B4E)), // Icono de cerrar
         title: const Text(
-          "Iniciar Sesion",
+          "Iniciar Sesión",
           style: TextStyle(
             color: Color(0xFF2E3B4E),
             fontWeight: FontWeight.bold,
@@ -25,120 +28,56 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Logo
-            Center(
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/imagenes/logo.png',
-                    height: 320,
-                    width: 320,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Center(
+                child: Image.asset(
+                  'assets/imagenes/logo.png',
+                  height: 200,
+                  width: 200,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Botón para iniciar sesión con Google
+              ElevatedButton.icon(
+                onPressed: () async {
+                  User? user = await _authService.signInWithGoogle();
+                  if (user != null) {
+                    Navigator.pushReplacementNamed(context, '/main');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error al iniciar sesión con Google')),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD88C6A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "HELIOS",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E3B4E),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Campo de texto para Nombre
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Nombre",
-                filled: true,
-                fillColor: const Color(0xFFFDFCFB),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Campo de texto para Correo electrónico
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Correo electronico",
-                filled: true,
-                fillColor: const Color(0xFFFDFCFB),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Campo de texto para Contraseña
-            TextField(
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                hintText: "Contraseña",
-                filled: true,
-                fillColor: const Color(0xFFFDFCFB),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
-                ),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
+                icon: Image.asset(
+                  'assets/imagenes/carro.png',
+                  height: 24,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.error, color: Colors.red); // Muestra un ícono si falla la carga
                   },
-                  child: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                    color: const Color(0xFF2E3B4E),
+                ),
+                label: const Text(
+                  "Inicia sesión con Google",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            // Botón "Continuar"
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/comienzaviajar');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E3B4E),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 80,
-                ),
-              ),
-              child: const Text(
-                "Continuar",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

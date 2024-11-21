@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280266227473",
+    "project_id": "sistemahelios-127b9",
+    "storage_bucket": "sistemahelios-127b9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280266227473:android:19db42fd1507fc217316b0",
+        "android_client_info": {
+          "package_name": "com.helios.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcn_cdaHeJ2RK4Bxc4WoVjr8i8D8bmGPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

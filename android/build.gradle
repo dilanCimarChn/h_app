@@ -16,3 +16,22 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+buildscript {
+    repositories {
+        google() // Asegúrate de tener esto
+        mavenCentral() // Asegúrate de tener esto
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2' // Usa la versión que funcione con tu Flutter
+        classpath 'com.google.gms:google-services:4.4.2' // Complemento de Firebase
+        
+    }
+}
+
+allprojects {
+    repositories {
+        google() // Asegúrate de tener esto
+        mavenCentral() // Asegúrate de tener esto
+    }
+}
