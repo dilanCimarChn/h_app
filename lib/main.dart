@@ -5,6 +5,7 @@ import 'package:h_app/login/comienzaaviajar.dart';
 import 'package:h_app/login/login_screen.dart';
 import 'package:h_app/login/registrarse.dart';
 import 'package:h_app/pages/main_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; // Import necesario para LatLng
 
 void main() {
   runApp(const MyApp());
