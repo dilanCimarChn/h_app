@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,8 +17,8 @@ class QRScannerPageState extends State<QRScannerPage> {
   final ImagePicker _imagePicker = ImagePicker();
   bool _isScanning = false;
 
-  void pauseCamera() => _controller.stop(); // Pausa la cámara
-  void resumeCamera() => _controller.start(); // Reanuda la cámara
+  void pauseCamera() => _controller.stop();
+  void resumeCamera() => _controller.start();
 
   Future<void> _scanFromGallery() async {
     final XFile? pickedFile =
@@ -26,41 +27,27 @@ class QRScannerPageState extends State<QRScannerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Procesando imagen seleccionada...')),
       );
-      // Aquí estaría la lógica de escaneo desde la galería
+      // Aquí puedes implementar lógica para escanear desde la galería
     }
   }
 
   void _processQRCode(String? code) {
     if (code != null) {
-      final data = code.split(',');
-      if (data.length == 4) {
-        try {
-          final startPoint = LatLng(
-            double.parse(data[0]),
-            double.parse(data[1]),
-          );
-          final destinationPoint = LatLng(
-            double.parse(data[2]),
-            double.parse(data[3]),
-          );
+      try {
+        final Map<String, dynamic> qrData = jsonDecode(code);
+        final startPoint = LatLng(qrData['start']['lat'], qrData['start']['lng']);
+        final destinationPoint =
+            LatLng(qrData['destination']['lat'], qrData['destination']['lng']);
 
-          // Llama al método del padre para actualizar la página del mapa
-          final mainScreenState =
-              context.findAncestorStateOfType<MainScreenState>();
-          if (mainScreenState != null) {
-            mainScreenState.updateMapPage(startPoint, destinationPoint);
-
-            // Cambia al mapa
-            mainScreenState.onTabTapped(2); // Cambia a la pestaña del mapa
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Formato del QR no válido.')),
-          );
+        final mainScreenState =
+            context.findAncestorStateOfType<MainScreenState>();
+        if (mainScreenState != null) {
+          mainScreenState.updateMapPage(startPoint, destinationPoint);
+          mainScreenState.onTabTapped(2); // Cambia a la pestaña del mapa
         }
-      } else {
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('El QR debe contener 4 coordenadas.')),
+          const SnackBar(content: Text('Formato del QR no válido.')),
         );
       }
     }
@@ -73,14 +60,9 @@ class QRScannerPageState extends State<QRScannerPage> {
       appBar: AppBar(
         title: const Text(
           "Escáner QR",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 22),
         ),
-        backgroundColor: const Color(0xFF3D405B), // Fondo oscuro para la AppBar
-        elevation: 2,
+        backgroundColor: const Color(0xFF3D405B),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
@@ -91,7 +73,6 @@ class QRScannerPageState extends State<QRScannerPage> {
       ),
       body: Column(
         children: [
-          // Vista de la cámara para escanear QR
           Expanded(
             flex: 5,
             child: MobileScanner(
@@ -101,7 +82,7 @@ class QRScannerPageState extends State<QRScannerPage> {
                 if (barcodes.isNotEmpty && !_isScanning) {
                   _isScanning = true;
                   final code = barcodes.first.rawValue;
-                  _processQRCode(code); // Procesa el código escaneado
+                  _processQRCode(code);
                   Future.delayed(const Duration(seconds: 2), () {
                     _isScanning = false;
                   });
@@ -109,14 +90,14 @@ class QRScannerPageState extends State<QRScannerPage> {
               },
             ),
           ),
-          // Contenedor para el texto y botón
           Expanded(
             flex: 3,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(30)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),
@@ -138,11 +119,7 @@ class QRScannerPageState extends State<QRScannerPage> {
                   const Text(
                     'Coloca el código QR en el marco para escanear',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF3D405B),
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -159,11 +136,7 @@ class QRScannerPageState extends State<QRScannerPage> {
                     ),
                     child: const Text(
                       'Escanear desde galería',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ],
