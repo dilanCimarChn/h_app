@@ -79,7 +79,7 @@ class QRScannerPageState extends State<QRScannerPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: const Color(0xFF3D405B), // Fondo oscuro para la AppBar
+        backgroundColor: const Color(0xFF3D405B),
         elevation: 2,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -91,25 +91,39 @@ class QRScannerPageState extends State<QRScannerPage> {
       ),
       body: Column(
         children: [
-          // Vista de la cámara para escanear QR
+          // Vista de la cámara centrada con marco
           Expanded(
             flex: 5,
-            child: MobileScanner(
-              controller: _controller,
-              onDetect: (capture) {
-                final barcodes = capture.barcodes;
-                if (barcodes.isNotEmpty && !_isScanning) {
-                  _isScanning = true;
-                  final code = barcodes.first.rawValue;
-                  _processQRCode(code); // Procesa el código escaneado
-                  Future.delayed(const Duration(seconds: 2), () {
-                    _isScanning = false;
-                  });
-                }
-              },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                MobileScanner(
+                  controller: _controller,
+                  onDetect: (capture) {
+                    final barcodes = capture.barcodes;
+                    if (barcodes.isNotEmpty && !_isScanning) {
+                      _isScanning = true;
+                      final code = barcodes.first.rawValue;
+                      _processQRCode(code);
+                      Future.delayed(const Duration(seconds: 2), () {
+                        _isScanning = false;
+                      });
+                    }
+                  },
+                ),
+                // Marco de escaneo
+                Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ],
             ),
           ),
-          // Contenedor para el texto y botón
+          // Contenedor para instrucciones y botón
           Expanded(
             flex: 3,
             child: Container(
@@ -129,14 +143,8 @@ class QRScannerPageState extends State<QRScannerPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.qr_code_scanner,
-                    size: 60,
-                    color: Color(0xFF3D405B),
-                  ),
-                  const SizedBox(height: 10),
                   const Text(
-                    'Coloca el código QR en el marco para escanear',
+                    'Coloca el código QR dentro del marco para escanear',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -174,4 +182,5 @@ class QRScannerPageState extends State<QRScannerPage> {
       ),
     );
   }
+
 }
