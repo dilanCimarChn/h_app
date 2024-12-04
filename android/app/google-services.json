@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "280266227473",
+    "project_id": "sistemahelios-127b9",
+    "storage_bucket": "sistemahelios-127b9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280266227473:android:2ea64f923ea04f8d7316b0",
+        "android_client_info": {
+          "package_name": "com.helios.h_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "280266227473-ts869kou8f4jr5kpiqfkf1njme7o13pv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.helios.h_app",
+            "certificate_hash": "4f07a0cc262e9b93d918eb076544bb36a24019a2"
+          }
+        },
+        {
+          "client_id": "280266227473-jvk403k2f8dhqf4ftrlskjmuc4ojnpi0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcn_cdaHeJ2RK4Bxc4WoVjr8i8D8bmGPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280266227473-a99t2s8tmlbbmof2ruscp23k66lib10s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "280266227473-7n8ure0kdm2fedjh23b7eav9b1jnbvfe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

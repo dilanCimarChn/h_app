@@ -5,11 +5,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class CompaniesPage extends StatelessWidget {
   // Función para abrir la URL externa
   Future<void> _launchURL(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      throw 'No se puede abrir la URL: $url';
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw 'No se puede abrir la URL: $url';
+      }
+    } catch (e) {
+      debugPrint('Error al abrir la URL: $e');
     }
   }
 
@@ -105,9 +109,7 @@ class CompaniesPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    _launchURL(facebookUrl);
-                  },
+                  onPressed: () => _launchURL(facebookUrl),
                   icon: const FaIcon(FontAwesomeIcons.facebook),
                   label: const Text('Facebook'),
                   style: ElevatedButton.styleFrom(
@@ -118,9 +120,7 @@ class CompaniesPage extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    _launchURL(whatsappUrl);
-                  },
+                  onPressed: () => _launchURL(whatsappUrl),
                   icon: const FaIcon(FontAwesomeIcons.whatsapp),
                   label: const Text('WhatsApp'),
                   style: ElevatedButton.styleFrom(

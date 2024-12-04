@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Método para obtener los paquetes en tiempo real
+  Stream<List<Map<String, dynamic>>> _getPaquetes() {
+    return _firestore.collection('paquetes').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFAF3E3), // Color de fondo suave
+      backgroundColor: const Color(0xFFFAF3E3),
       appBar: AppBar(
-        backgroundColor: Color(0xFF2E3B4E),
+        backgroundColor: const Color(0xFF2E3B4E),
         title: Row(
           children: [
-            Icon(Icons.local_shipping, color: Colors.white, size: 30),
-            SizedBox(width: 8),
-            Text(
+            const Icon(Icons.local_shipping, color: Colors.white, size: 30),
+            const SizedBox(width: 8),
+            const Text(
               'HELIOS',
               style: TextStyle(
                 fontSize: 24,
@@ -27,71 +42,50 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Encabezado
-            Text(
+            const Text(
               "Tus paquetes",
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF5A6476), // Tono claro para contraste
+                color: Color(0xFF5A6476),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2,
               color: Color(0xFF2E3B4E),
             ),
-            SizedBox(height: 16),
-            // Lista de paquetes
+            const SizedBox(height: 16),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildPackageCard(
-                    context,
-                    "Juguetes BJ-2179",
-                    "De La Paz a Cochabamba",
-                    "Hoy 06:25 am",
-                  ),
-                  _buildPackageCard(
-                    context,
-                    "Juguetes CJ-1248",
-                    "De La Paz a Tarija",
-                    "Hoy 06:25 am",
-                  ),
-                  _buildPackageCard(
-                    context,
-                    "Juguetes - 206",
-                    "De Cochabamba a Tarija",
-                    "Hoy 06:25 am",
-                  ),
-                ],
-              ),
-            ),
-            // Botón recargar
-            Align(
-              alignment: Alignment.center,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Acción del botón
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Recargando paquetes...')),
+              child: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: _getPaquetes(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Error al cargar los paquetes.'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No tienes paquetes registrados.'));
+                  }
+
+                  final paquetes = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: paquetes.length,
+                    itemBuilder: (context, index) {
+                      final paquete = paquetes[index];
+                      return _buildPackageCard(
+                        remitente: paquete['remitente']['nombre'] ?? 'Sin remitente',
+                        destinatario: paquete['destinatario']['nombre'] ?? 'Sin destinatario',
+                        tipo: paquete['detallesPaquete']['tipo'] ?? 'Sin tipo',
+                        fecha: paquete['fechaEnvio'] ?? 'Sin fecha',
+                        hora: paquete['horaEnvio'] ?? 'Sin hora',
+                        peso: paquete['detallesPaquete']['peso']?.toString() ?? 'N/A',
+                        precio: paquete['detallesPaquete']['precio']?.toString() ?? 'N/A',
+                      );
+                    },
                   );
                 },
-                icon: Icon(Icons.refresh),
-                label: Text(
-                  "Recargar",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Color(0xFFFAF3E3), // Contraste claro
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF2E3B4E),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
               ),
             ),
           ],
@@ -100,50 +94,82 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPackageCard(
-      BuildContext context, String title, String route, String time) {
+  // Tarjeta de visualización de paquetes
+  Widget _buildPackageCard({
+    required String remitente,
+    required String destinatario,
+    required String tipo,
+    required String fecha,
+    required String hora,
+    required String peso,
+    required String precio,
+  }) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Color(0xFFD88C6A),
+          color: const Color(0xFFD88C6A),
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  time,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
             Text(
-              route,
-              style: TextStyle(
-                fontSize: 16,
+              "Remitente: $remitente",
+              style: const TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
-              textAlign: TextAlign.end,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Destinatario: $destinatario",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Tipo de paquete: $tipo",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Fecha de envío: $fecha",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white70,
+              ),
+            ),
+            Text(
+              "Hora de envío: $hora",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Peso: $peso kg",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white70,
+              ),
+            ),
+            Text(
+              "Precio: $precio Bs",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white70,
+              ),
             ),
           ],
         ),
