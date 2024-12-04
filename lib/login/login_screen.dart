@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -8,52 +7,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  // Método para iniciar sesión
-  Future<void> _loginWithEmail() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      // Redirigir si el inicio de sesión es exitoso
-      Navigator.pushReplacementNamed(context, '/main');
-    } catch (e) {
-      print("Error al iniciar sesión: $e");
-      _showErrorDialog("Correo o contraseña incorrectos");
-    }
-  }
-
-  // Mostrar diálogo de error
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF3E3),
+      backgroundColor: const Color(0xFFFAF3E3), // Fondo beige
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Color(0xFF2E3B4E)),
+        iconTheme: const IconThemeData(color: Color(0xFF2E3B4E)), // Icono de cerrar
         title: const Text(
-          "Iniciar Sesión",
+          "Iniciar Sesion",
           style: TextStyle(
             color: Color(0xFF2E3B4E),
             fontWeight: FontWeight.bold,
@@ -65,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Logo
             Center(
               child: Column(
                 children: [
@@ -86,10 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            // Campo de texto para Nombre
             TextField(
-              controller: _emailController,
               decoration: InputDecoration(
-                hintText: "Correo electrónico",
+                hintText: "Nombre",
                 filled: true,
                 fillColor: const Color(0xFFFDFCFB),
                 border: OutlineInputBorder(
@@ -103,8 +68,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 15),
+            // Campo de texto para Correo electrónico
             TextField(
-              controller: _passwordController,
+              decoration: InputDecoration(
+                hintText: "Correo electronico",
+                filled: true,
+                fillColor: const Color(0xFFFDFCFB),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Campo de texto para Contraseña
+            TextField(
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 hintText: "Contraseña",
@@ -132,8 +114,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 30),
+            // Botón "Continuar"
             ElevatedButton(
-              onPressed: _loginWithEmail,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/comienzaviajar');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2E3B4E),
                 shape: RoundedRectangleBorder(
@@ -145,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               child: const Text(
-                "Iniciar Sesión",
+                "Continuar",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,

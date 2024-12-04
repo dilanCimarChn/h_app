@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:h_app/services/google_auth_service.dart';
 
 class Registrarse extends StatefulWidget {
   @override
@@ -7,36 +6,7 @@ class Registrarse extends StatefulWidget {
 }
 
 class _RegistrarseState extends State<Registrarse> {
-  final GoogleAuthService _googleAuthService = GoogleAuthService();
-
-  void _registerWithGoogle() async {
-    try {
-      final user = await _googleAuthService.signInWithGoogle();
-      if (user != null) {
-        // Usuario autenticado con éxito
-        print("Inicio de sesión exitoso con Google: ${user.email}");
-        // Aquí puedes redirigir a otra pantalla o realizar acciones adicionales
-      } else {
-        // Usuario canceló el inicio de sesión
-        print("El usuario canceló el inicio de sesión.");
-      }
-    } catch (e) {
-      // Manejo de errores
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Error"),
-          content: Text("Error al registrar con Google: $e"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Cerrar"),
-            ),
-          ],
-        ),
-      );
-    }
-  }
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +38,74 @@ class _RegistrarseState extends State<Registrarse> {
               ),
             ),
             const SizedBox(height: 20),
+            // Campo de texto para Nombre
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Nombre",
+                filled: true,
+                fillColor: const Color(0xFFFDFCFB),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Campo de texto para Correo
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Correo",
+                filled: true,
+                fillColor: const Color(0xFFFDFCFB),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Campo de texto para Contraseña
+            TextField(
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                hintText: "Contraseña",
+                filled: true,
+                fillColor: const Color(0xFFFDFCFB),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20,
+                ),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                  child: Icon(
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    color: const Color(0xFF2E3B4E),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            // Botón "Continuar"
             ElevatedButton(
-              onPressed: _registerWithGoogle,
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/comienzaviajar');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2E3B4E),
                 shape: RoundedRectangleBorder(
@@ -81,7 +117,7 @@ class _RegistrarseState extends State<Registrarse> {
                 ),
               ),
               child: const Text(
-                "Registrarse con Google",
+                "Continuar",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -95,3 +131,4 @@ class _RegistrarseState extends State<Registrarse> {
     );
   }
 }
+
