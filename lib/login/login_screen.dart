@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -23,10 +24,13 @@ class _LoginScreenState extends State<LoginScreen> {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
+        // Guardar el correo en SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('loggedInUserEmail', email);
+
         // Usuario encontrado
         Navigator.pushReplacementNamed(context, '/comienzaviajar');
       } else {
-        // Usuario no encontrado
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Correo o contraseña incorrectos')),
         );
@@ -41,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF3E3), // Fondo beige
+      backgroundColor: const Color(0xFFFAF3E3),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -60,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Logo
               Center(
                 child: Column(
                   children: [
@@ -82,7 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Campo de texto para Correo electrónico
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -100,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              // Campo de texto para Contraseña
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -130,7 +131,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              // Botón "Iniciar Sesión"
               ElevatedButton(
                 onPressed: _loginUser,
                 style: ElevatedButton.styleFrom(
