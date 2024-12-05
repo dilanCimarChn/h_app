@@ -38,36 +38,42 @@ class _MapPageState extends State<MapPage> {
 
   void _initializeMarkers() {
     setState(() {
+      // Marcador de inicio
       _markers.add(Marker(
         markerId: const MarkerId("start"),
         position: widget.startPoint,
-        infoWindow: const InfoWindow(title: "Terminal de Buses La Paz"),
+        infoWindow: const InfoWindow(title: "Punto de Inicio"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
       ));
+      // Marcador de destino
       _markers.add(Marker(
         markerId: const MarkerId("destination"),
         position: widget.destinationPoint,
-        infoWindow: const InfoWindow(title: "Terminal de Buses Cochabamba"),
+        infoWindow: const InfoWindow(title: "Punto de Destino"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
       ));
     });
   }
 
   Future<void> _drawRoute() async {
     _polylinePoints = PolylinePoints();
+
+    // Realizar la solicitud a la API de Google Maps
     final result = await _polylinePoints.getRouteBetweenCoordinates(
-      request: PolylineRequest(
-        origin: PointLatLng(widget.startPoint.latitude, widget.startPoint.longitude),
-        destination: PointLatLng(widget.destinationPoint.latitude, widget.destinationPoint.longitude),
-        mode: TravelMode.driving, // Modo de transporte
-      ),
-      googleApiKey: 'YOUR_GOOGLE_API_KEY', // Reemplaza con tu API Key
+      'AIzaSyCcn_cdaHeJ2RK4Bxc4WoVjr8i8D8bmGPg', // Reemplaza con tu clave de API de Google
+      PointLatLng(widget.startPoint.latitude, widget.startPoint.longitude),
+      PointLatLng(widget.destinationPoint.latitude, widget.destinationPoint.longitude),
+      travelMode: TravelMode.driving, // Puedes cambiar a walking o bicycling
     );
 
     if (result.points.isNotEmpty) {
+      // Convertir los puntos a coordenadas LatLng
       for (var point in result.points) {
         _polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
 
       setState(() {
+        // Agregar la ruta como una polilínea en el mapa
         _polylines.add(Polyline(
           polylineId: const PolylineId("route"),
           points: _polylineCoordinates,
@@ -76,8 +82,9 @@ class _MapPageState extends State<MapPage> {
         ));
       });
     } else {
+      // Mostrar un mensaje si no se pudo obtener la ruta
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No se pudo trazar la ruta.")),
+        const SnackBar(content: Text("verificando...")),
       );
     }
   }
@@ -93,7 +100,7 @@ class _MapPageState extends State<MapPage> {
         onMapCreated: (controller) => _mapController = controller,
         initialCameraPosition: CameraPosition(
           target: widget.startPoint,
-          zoom: 12,
+          zoom: 12, // Nivel de zoom inicial
         ),
         markers: _markers,
         polylines: _polylines,

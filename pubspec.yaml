@@ -40,8 +40,8 @@ dependencies:
 # para el uso de maps 
   google_maps_flutter: ^2.1.1
   location: ^6.0.2
-  flutter_polyline_points: ^2.1.0 # Para dibujar rutas
 
+  flutter_polyline_points: ^1.0.0
 
 
 # para las companias
