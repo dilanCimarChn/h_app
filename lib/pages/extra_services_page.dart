@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // Paquete para abrir enlaces en el navegador
 import 'qr_scanner_page.dart'; // Asegúrate de que esta ruta sea correcta
